@@ -1,0 +1,15 @@
+{
+  "name": "tfp-peer-server",
+  "version": "1.0.0",
+  "description": "PeerJS signaling server for The Freedom Philosophy Live Studio",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "peer": "^0.9.1"
+  }
+}
