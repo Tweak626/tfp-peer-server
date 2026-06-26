@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 9000;
 
-// ── CORS — must be first ──
+// CORS — must be first
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -15,13 +15,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── Health check ──
+// Health check
 app.get('/', (req, res) => res.send('TFP PeerJS Server is running'));
 
-// ── PeerJS mounted at root with path /peerjs ──
-// PeerJS client with path:'/peerjs' will hit: host + /peerjs + /id = /peerjs/id ✓
+// PeerJS — path:'/' means client hits /peerjs/id correctly
+// PeerJS URL formula: host + path + key('peerjs') + '/id'
+// With path='/': railway.app/ + peerjs + /id = railway.app/peerjs/id ✓
 const peerServer = ExpressPeerServer(server, {
-  path: '/peerjs',
+  path: '/',
   allow_discovery: true,
   proxied: true,
 });
