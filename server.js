@@ -6,21 +6,18 @@ const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 9000;
 
-// CORS — must be first
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization');
+  res.header('Access-Control-Allow-Headers', '*');
   if(req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
-// Health check
 app.get('/', (req, res) => res.send('TFP PeerJS Server is running'));
 
-// PeerJS — path:'/' means client hits /peerjs/id correctly
-// PeerJS URL formula: host + path + key('peerjs') + '/id'
-// With path='/': railway.app/ + peerjs + /id = railway.app/peerjs/id ✓
+// PeerJS client path:'/' builds URL: host + '/' + 'peerjs' + '/id'
+// So server path must be '/' and it handles /peerjs/* automatically
 const peerServer = ExpressPeerServer(server, {
   path: '/',
   allow_discovery: true,
@@ -29,13 +26,7 @@ const peerServer = ExpressPeerServer(server, {
 
 app.use('/', peerServer);
 
-peerServer.on('connection', client => {
-  console.log(`[${new Date().toISOString()}] Connected: ${client.getId()}`);
-});
-peerServer.on('disconnect', client => {
-  console.log(`[${new Date().toISOString()}] Disconnected: ${client.getId()}`);
-});
+peerServer.on('connection', c => console.log(`[${new Date().toISOString()}] + ${c.getId()}`));
+peerServer.on('disconnect', c => console.log(`[${new Date().toISOString()}] - ${c.getId()}`));
 
-server.listen(port, () => {
-  console.log(`TFP PeerJS Server running on port ${port}`);
-});
+server.listen(port, () => console.log(`TFP PeerJS running on ${port}`));
